@@ -14,7 +14,10 @@ const Button = ({onClick,text, p}) =>  {
 const StaticsticLine = ({ text, value, p}) => {
 
   return (
-    <p> {text}: {value} {p} </p>
+       <tr>
+      <td>{text}</td>
+      <td>{value} {p}</td>
+    </tr>
   )
 }
 
@@ -34,15 +37,16 @@ const Statistics = ({ allFeedback }) => {
     return (
       <div>
         <h2>Statistics</h2>
-        <StaticsticLine text = "All" value = {total} /> 
-       
-        <StaticsticLine text = "Good" value = {good} />
-        
-        <StaticsticLine text = "Neutral" value =  {neutral}/>
-        <StaticsticLine text = "Bad" value = {bad} />
-        <StaticsticLine text = "Average" value = {(good - bad) / total} />
-        <StaticsticLine text="Positive" value={(good / total) * 100} p='%' />
-        
+                <table>
+          <tbody>
+            <StaticsticLine text="All" value={total} />
+            <StaticsticLine text="Good" value={good} />
+            <StaticsticLine text="Neutral" value={neutral} />
+            <StaticsticLine text="Bad" value={bad} />
+            <StaticsticLine text="Average" value={(good - bad) / total} />
+            <StaticsticLine text="Positive" value={(good / total) * 100} p='%' />
+          </tbody>
+        </table>
       </div>
     );
   }
