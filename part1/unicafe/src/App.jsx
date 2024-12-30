@@ -3,11 +3,19 @@ import { useState } from 'react'
 
 //button to increase ratings
 
-const Button = ({onClick,text}) =>  {
+const Button = ({onClick,text, p}) =>  {
  return( <button onClick={onClick} >
     {text}
  </button>
  )
+}
+
+//StaticsticLine Component
+const StaticsticLine = ({ text, value, p}) => {
+
+  return (
+    <p> {text}: {value} {p} </p>
+  )
 }
 
 //Refactored Statistic Component
@@ -26,12 +34,15 @@ const Statistics = ({ allFeedback }) => {
     return (
       <div>
         <h2>Statistics</h2>
-        <p>All: {total}</p>
-        <p>Good: {good}</p>
-        <p>Neutral: {neutral}</p>
-        <p>Bad: {bad}</p>
-        <p>Average: {(good - bad) / total}</p>
-        <p>Positive: {(good / total) * 100} %</p>
+        <StaticsticLine text = "All" value = {total} /> 
+       
+        <StaticsticLine text = "Good" value = {good} />
+        
+        <StaticsticLine text = "Neutral" value =  {neutral}/>
+        <StaticsticLine text = "Bad" value = {bad} />
+        <StaticsticLine text = "Average" value = {(good - bad) / total} />
+        <StaticsticLine text="Positive" value={(good / total) * 100} p='%' />
+        
       </div>
     );
   }
