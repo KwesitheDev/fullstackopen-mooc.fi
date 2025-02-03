@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import Filter from './components/Filter';
+import PersonForm from './components/PersonForm';
+import Persons from './components/Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -6,41 +9,31 @@ const App = () => {
     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ]) 
-  
+  ]); 
+
   const [newName, setNewName] = useState('');
   const [number, setNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
- const addName = (event) => {
-   event.preventDefault();
-   const nameExist = persons.find(person => person.name === newName)
-   if (nameExist) {
-     alert(`${newName} is already added to phonebook`)
-     return;
-   }
-   
-    //create a new person
-   const newPerson = { name: newName, number: number };
-   ;
+  const addName = (event) => {
+    event.preventDefault();
+    const nameExist = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
+    if (nameExist) {
+      alert(`${newName} is already added to phonebook`);
+      return;
+    }
 
+    const newPerson = { name: newName, number: number, id: persons.length + 1 };
     setPersons([...persons, newPerson]);
-   setNewName('');
-   setNumber('');
+    setNewName('');
+    setNumber('');
   };
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-   
-  }
-  const handleNumberChange = (event) => {
-    setNumber(event.target.value)
-  }
-   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  const handleNameChange = (event) => setNewName(event.target.value);
+  const handleNumberChange = (event) => setNumber(event.target.value);
+  const handleSearchChange = (event) => setSearchTerm(event.target.value);
 
-  // Filtering logic for search
+  // Filtering logic
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -48,39 +41,21 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with: 
-        <input 
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </div>
-      <br></br>
-      <br></br>
-      <form onSubmit={addName} >
-        <div>
-          name: <input value={newName}
-            onChange={handleNameChange}
-          />
-          
-        </div>
-        <div>
-          number: <input value={number}
-          onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-            <h2>Numbers</h2>
-      <ul>
-        {filteredPersons.map(person => (
-          <li key={person.id}>{person.name} - {person.number}</li>
-        ))}
-      </ul>
-    </div>
-  )
-}
+      <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
 
-export default App
+      <h3>Add a new contact</h3>
+      <PersonForm 
+        addName={addName}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        number={number}
+        handleNumberChange={handleNumberChange}
+      />
+
+      <h3>Numbers</h3>
+      <Persons persons={filteredPersons} />
+    </div>
+  );
+};
+
+export default App;
