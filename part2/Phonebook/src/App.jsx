@@ -2,7 +2,7 @@ import { useState,useEffect } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
-//import axios from 'axios'
+import axios from 'axios'
 import phoneService from './services/phone'
 
 const App = () => {
@@ -52,7 +52,17 @@ const App = () => {
 
   //Delete Person
   const personToDelete = (id) => {
-      console.log(`THe person of id: ${id} is to be deleted`)
+    if (window.confirm(`Delete ${persons.find(person => person.id === id).name}?`)) {
+      axios.delete(`http://localhost:3001/persons/${id}`)
+        .then(() => {
+          console.log("Deleted Successfully")
+          setPersons(persons.filter(person => person.id !== id))
+        })
+      .catch(error=> console.log(error))
+    }
+    else{
+      console.log("Deletion cancelled")
+    }
   }
 
   //Handle Change
