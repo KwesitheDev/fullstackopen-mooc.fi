@@ -2,7 +2,8 @@ import { useState,useEffect } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
-import axios from 'axios'
+//import axios from 'axios'
+import phoneService from './services/phone'
 
 const App = () => {
   const [persons, setPersons] = useState([]); 
@@ -10,16 +11,17 @@ const App = () => {
   const [number, setNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  //GET Request
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
-      });
+    phoneService
+      .getAll()
+      .then(intialPersons => setPersons(intialPersons))
+    console.log('GET Working')
+
   }, []);
 
 
-
+//Add NAme
   const addName = (event) => {
     event.preventDefault();
     const nameExist = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
@@ -28,12 +30,32 @@ const App = () => {
       return;
     }
 
+
     const newPerson = { name: newName, number: number, id: persons.length + 1 };
-    setPersons([...persons, newPerson]);
-    setNewName('');
-    setNumber('');
+    
+    phoneService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('');
+        setNumber('');
+      })
+      .catch(error => {
+        console.log('Fail', error)
+        //migh be faulty, I literally don't know why I added the error to console.log
+        //Felt it'll make sense to log the error as well as 'Fail"
+    
+      })
+    //setPersons([...persons, newPerson]);
+
   };
 
+  //Delete Person
+  const personToDelete = (id) => {
+      console.log(`THe person of id: ${id} is to be deleted`)
+  }
+
+  //Handle Change
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNumber(event.target.value);
   const handleSearchChange = (event) => setSearchTerm(event.target.value);
@@ -58,7 +80,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={filteredPersons} />
+      <Persons persons={filteredPersons} deletePerson={personToDelete} />
     </div>
   );
 };
