@@ -4,12 +4,15 @@ import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 //import axios from 'axios'
 import phoneService from './services/phone'
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons] = useState([]); 
   const [newName, setNewName] = useState('');
   const [number, setNumber] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [errorMessage, setErrorMessage] = useState();
+  const [notificationStyle, setNotificationStyle] = useState();
 
   //GET Request
   useEffect(() => {
@@ -34,6 +37,23 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id !== nameExist.id ? person : returnedPerson))
         })
+          .catch(() => {
+          const notificationStyle ={
+          font: "red",
+          color: 'red',
+          background: 'lightgrey',
+          border: '2px solid red',
+          borderRadius: 5,
+          marginBottom: 10,
+          padding: 10,
+          borderStyle: 'solid'
+          }
+          setNotificationStyle(notificationStyle)
+            setErrorMessage(`Information of ${nameExist.name} has already been removed from server`)
+            setTimeout(()=>{
+          setErrorMessage(null)
+        },5000)
+        })
       }    
 
       return;
@@ -45,7 +65,22 @@ const App = () => {
     phoneService
       .create(newPerson)
       .then(returnedPerson => {
+        const notificationStyle ={
+          font: "green",
+          color: 'green',
+          background: 'lightgrey',
+          border: '2px solid green',
+          borderRadius: 5,
+          marginBottom: 10,
+          padding: 10,
+          borderStyle: 'solid'
+        }
+        setNotificationStyle(notificationStyle)
         setPersons(persons.concat(returnedPerson))
+        setErrorMessage(`Added ${newPerson.name}`)
+        setTimeout(()=>{
+          setErrorMessage(null)
+        },5000)
         setNewName('');
         setNumber('');
       })
@@ -87,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} notificationStyle={notificationStyle}/>
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
 
       <h3>Add a new contact</h3>
